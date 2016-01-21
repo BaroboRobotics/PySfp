@@ -2,7 +2,7 @@
 
 from distutils.core import setup, Extension
 
-module1 = Extension('sfp',
+module1 = Extension('_sfp',
                     sources = [
                         'src/sfpmodule.cpp',
                         'src/libsfp/src/serial_framing_protocol.cpp',
@@ -20,4 +20,7 @@ module1 = Extension('sfp',
 setup (name = 'PySfp',
        version = '1.0',
        description = 'This is a Python binding for Barobo\'s Serial Framing Protocol.',
-       ext_modules = [module1])
+       ext_modules = [module1],
+       ext_package = 'sfp',
+       packages = ['sfp'],
+       )
