@@ -55,7 +55,7 @@ void _write_fun(uint8_t* octets, size_t len, size_t* outlen, void *userdata)
 }
 
 PyMODINIT_FUNC
-PyInit_sfp(void)
+PyInit__sfp(void)
 {
     PyObject *m;
 
