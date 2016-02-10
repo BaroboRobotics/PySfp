@@ -14,6 +14,7 @@ module1 = Extension('_sfp',
                         ],
                     extra_compile_args = [
                         '-std=c++11',
+                        '-g',
                         ],
                     )
 
