@@ -1,0 +1,5 @@
+include src/*
+include src/libsfp/src/*
+recursive-include src/libsfp/include *.h
+recursive-include include *.h
+recursive-include src/cxx-util/include *.hpp
