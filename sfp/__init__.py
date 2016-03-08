@@ -5,6 +5,13 @@ except:
 
 import threading
 
+import sys
+rec_version = (3, 5)
+if sys.version_info >= rec_version:
+    from . import asyncio
+
+from . import client
+
 class Context():
     def __init__(self):
         self._ctx = _sfp.new_context()

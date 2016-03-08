@@ -1,5 +1,8 @@
 from .asyncio import SfpProtocol
 import asyncio
+import functools
+
+__all__ = ['connect']
 
 async def connect(host, port, loop=None, klass=SfpProtocol):
     ''' Connect to an SFP server.
@@ -13,5 +16,5 @@ async def connect(host, port, loop=None, klass=SfpProtocol):
         loop = asyncio.get_event_loop()
 
     transport, protocol = await loop.create_connection(
-            klass, host=host, port=port)
+            functools.partial(klass, loop), host=host, port=port)
     return (transport, protocol)
