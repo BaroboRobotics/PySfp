@@ -2,24 +2,45 @@ import asyncio
 import logging
 import sfp
 
+logger = logging.getLogger('sfp.asyncio.protocol')
+
 class SfpProtocol(asyncio.Protocol):
-    def __init__(self, deliver_callback, asyncio_loop):
+    def __init__(self, asyncio_loop):
         self._context = sfp.Context()
-        self.deliver = deliver_callback
         self._loop = asyncio_loop
+        self._q = asyncio.Queue(loop=self._loop)
+
+    async def close(self):
+        logger.info('Close')
+        self._transport.close()
 
     def connection_made(self, transport):
         self._transport = transport
         self._context.set_write_callback(self._write)
         self._context.set_deliver_callback(self.__deliver)
         self._context.connect()
+        logger.info('Connection established')
+
+    def connection_lost(self, exc):
+        '''
+        This is called when the connection is lost. Override me.
+        '''
+        logger.info('Remote closed connection: '+str(exc))
 
     def data_received(self, data):
+        logger.info('Received {} bytes from remote host.'.format(len(data)))
         for byte in data:
             plen = self._context.deliver(int(byte))
 
+    async def recv(self):
+        return await self._q.get()
+
+    async def send(self, data):
+        self._context.write(data)
+
     def write(self, data):
         self._context.write(data)
+        logger.info('Sent {} bytes to remote host.'.format(len(data)))
 
     def _write(self, data):
         self._transport.write(data)
@@ -32,5 +53,7 @@ class SfpProtocol(asyncio.Protocol):
         '''
         if length == 0:
             return
-        asyncio.run_coroutine_threadsafe(self.deliver(bytestring), self._loop)
+        asyncio.run_coroutine_threadsafe(
+                self._q.put(bytestring),
+                self._loop)
 

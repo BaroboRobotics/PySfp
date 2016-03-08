@@ -19,7 +19,7 @@ module1 = Extension('_sfp',
                     )
 
 setup (name = 'PySfp',
-       version = '0.0.1',
+       version = '0.1.0',
        author = 'David Ko',
        author_email = 'david@barobo.com',
        url = 'http://github.com/BaroboRobotics/libsfp',
