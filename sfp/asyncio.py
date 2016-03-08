@@ -14,6 +14,12 @@ class SfpProtocol(asyncio.Protocol):
         self._context.set_deliver_callback(self.__deliver)
         self._context.connect()
 
+    def connection_lost(self, exc):
+        '''
+        This is called when the connection is lost. Override me.
+        '''
+        logging.info('Remote closed connection: '+str(exc))
+
     def data_received(self, data):
         for byte in data:
             plen = self._context.deliver(int(byte))
