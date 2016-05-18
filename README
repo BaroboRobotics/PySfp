@@ -1,0 +1,8 @@
+PySfp
+=====
+
+This is a Python binding for libsfp https://github.com/BaroboRobotics/libsfp.
+SFP stands for "serial framing protocol". It's main purpose is implement a
+packetized, reliable transport on top of stream oriented or unreliable
+transports. It is primarily used by Barobo Linkbots (https://barobo.com) as
+a reliable layer on top of the otherwise unreliable USART serial communication.
