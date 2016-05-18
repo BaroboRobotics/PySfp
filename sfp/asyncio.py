@@ -10,7 +10,8 @@ class SfpProtocol(asyncio.Protocol):
         self._loop = asyncio_loop
         self._q = asyncio.Queue(loop=self._loop)
 
-    async def close(self):
+    @asyncio.coroutine
+    def close(self):
         logger.info('Close')
         self._transport.close()
 
@@ -31,11 +32,14 @@ class SfpProtocol(asyncio.Protocol):
         logger.info('Received {} bytes from remote host.'.format(len(data)))
         for byte in data:
             plen = self._context.deliver(int(byte))
+    
+    @asyncio.coroutine
+    def recv(self):
+        rc = yield from self._q.get()
+        return rc
 
-    async def recv(self):
-        return await self._q.get()
-
-    async def send(self, data):
+    @asyncio.coroutine
+    def send(self, data):
         self._context.write(data)
 
     def write(self, data):

@@ -4,7 +4,8 @@ import functools
 
 __all__ = ['connect']
 
-async def connect(host, port, loop=None, klass=SfpProtocol):
+@asyncio.coroutine
+def connect(host, port, loop=None, klass=SfpProtocol):
     ''' Connect to an SFP server.
 
     :param host: The remote hostname or IP address to connect to
@@ -15,6 +16,6 @@ async def connect(host, port, loop=None, klass=SfpProtocol):
     if not loop:
         loop = asyncio.get_event_loop()
 
-    transport, protocol = await loop.create_connection(
+    transport, protocol = yield from loop.create_connection(
             functools.partial(klass, loop), host=host, port=port)
     return (transport, protocol)
