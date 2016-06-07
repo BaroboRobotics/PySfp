@@ -1,8 +1,42 @@
 import asyncio
+import concurrent
+import functools
 import logging
 import sfp
+import sys
 
 logger = logging.getLogger('sfp.asyncio.protocol')
+
+if sys.version_info >= (3, 4, 4):
+    run_coroutine_threadsafe = asyncio.run_coroutine_threadsafe
+else:
+    def run_coroutine_threadsafe(coroutine, loop):
+        future = concurrent.futures.Future()
+
+        def callback():
+            try:
+                chain_futures( asyncio.async(coroutine, loop=loop), future )
+            except Exception as exc:
+                if future.set_running_or_notify_cancel():
+                    future.set_exception(exc)
+                raise
+
+        loop.call_soon_threadsafe(callback)
+        return future
+
+def chain_futures(fut1, fut2, conv=lambda x: x):
+    def done(fut2, conv, fut1):
+        if fut1.cancelled():
+            fut2.cancel()
+        else:
+            fut2.set_result( conv(fut1.result()) )
+
+    fut1.add_done_callback(
+            functools.partial(
+                done,
+                fut2,
+                conv)
+            )
 
 class SfpProtocol(asyncio.Protocol):
     def __init__(self, asyncio_loop):
@@ -57,7 +91,7 @@ class SfpProtocol(asyncio.Protocol):
         '''
         if length == 0:
             return
-        asyncio.run_coroutine_threadsafe(
+        run_coroutine_threadsafe(
                 self._q.put(bytestring),
                 self._loop)
 
