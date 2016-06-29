@@ -46,7 +46,7 @@ class SfpProtocol(asyncio.Protocol):
 
     @asyncio.coroutine
     def close(self):
-        logger.info('Close')
+        logger.debug('Close')
         self._transport.close()
 
     def connection_made(self, transport):
@@ -54,16 +54,16 @@ class SfpProtocol(asyncio.Protocol):
         self._context.set_write_callback(self._write)
         self._context.set_deliver_callback(self.__deliver)
         self._context.connect()
-        logger.info('Connection established')
+        logger.debug('Connection established')
 
     def connection_lost(self, exc):
         '''
         This is called when the connection is lost. Override me.
         '''
-        logger.info('Remote closed connection: '+str(exc))
+        logger.debug('Remote closed connection: '+str(exc))
 
     def data_received(self, data):
-        logger.info('Received {} bytes from remote host.'.format(len(data)))
+        logger.debug('Received {} bytes from remote host.'.format(len(data)))
         for byte in data:
             plen = self._context.deliver(int(byte))
     
@@ -78,7 +78,7 @@ class SfpProtocol(asyncio.Protocol):
 
     def write(self, data):
         self._context.write(data)
-        logger.info('Sent {} bytes to remote host.'.format(len(data)))
+        logger.debug('Sent {} bytes to remote host.'.format(len(data)))
 
     def _write(self, data):
         self._transport.write(data)
