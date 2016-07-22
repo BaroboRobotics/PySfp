@@ -23,7 +23,7 @@ module1 = Extension('_sfp',
 here = os.path.abspath(os.path.dirname(__file__))
 README = codecs.open(os.path.join(here, 'README'), encoding='utf8').read()
 setup (name = 'PySfp',
-       version = '0.1.6',
+       version = '0.1.7',
        author = 'David Ko',
        author_email = 'david@barobo.com',
        url = 'http://github.com/BaroboRobotics/libsfp',
