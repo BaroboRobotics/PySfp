@@ -15,7 +15,7 @@ module1 = Extension('_sfp',
                         'src/cxx-util/include',
                         ],
                     extra_compile_args = [
-                        '-std=c++11',
+                        '-std=c++0x',
                         '-g',
                         ],
                     )
